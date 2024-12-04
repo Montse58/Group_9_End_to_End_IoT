@@ -101,3 +101,12 @@ def calc_moisture():
             moisture = float(moisture)
 
     
+
+#This is the second Query:
+def avg_consumption():
+    dishwasher_data = device1_metadata_collection.find_one({"customAttributes.name":"Smart Dishwasher"})
+
+    if dishwasher_data:
+        dishwasher_uid = dishwasher_data("assetUid")
+    else:
+        return "No data found"
