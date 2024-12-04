@@ -2,6 +2,11 @@ import socket #import the socket module for network communication
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
 
 
 client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
