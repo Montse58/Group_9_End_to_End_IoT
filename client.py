@@ -26,7 +26,7 @@ def TCP_client():
                 print(f"{i}. {query}")
             
             # Get message input from user
-            userMessage = input("\nEnter your query (or type 'exit' to quit): >")
+            userMessage = input("\nEnter the number of your query (or type 'exit' to quit): >")
             
             # Exit program if user enters 'exit'
             if userMessage.lower() == 'exit':
@@ -34,20 +34,20 @@ def TCP_client():
                 print("Connection closed successfully.")
                 break  # Exits loop and closes connection
             
-            # Check if the query is valid
-            if userMessage not in valid_queries:
-                print("\nSorry, this query cannot be processed.")
-                print("Please try one of the following queries:")
-                for i, query in enumerate(valid_queries, 1):
-                    print(f"{i}. {query}")
-                continue  # Go back to the top of the loop
-            
-            # Send user's valid message to the server
-            myTCPSocket.send(bytearray(str(userMessage), encoding='utf-8'))
-            
-            # Receive and print the server's response
-            serverResponse = myTCPSocket.recv(2500)  # Receive up to 2500 bytes of data from the server
-            print(f"Server's response: {serverResponse.decode('utf-8')}")
+            # Handle numeric input
+            if userMessage.isdigit():
+                queryIndex = int(userMessage) - 1  # Convert to 0-based index
+                if 0 <= queryIndex < len(valid_queries):
+                    # Send the corresponding query to the server
+                    myTCPSocket.send(bytearray(valid_queries[queryIndex], encoding='utf-8'))
+                    
+                    # Receive and print the server's response
+                    serverResponse = myTCPSocket.recv(2500)  # Receive up to 2500 bytes of data from the server
+                    print(f"Server's response: {serverResponse.decode('utf-8')}")
+                else:
+                    print("Invalid number. Please select a valid query number.")
+            else:
+                print("Invalid input. Please enter a number corresponding to a query or 'exit' to quit.")
     
     except (ValueError, socket.gaierror):
         print("Error. Invalid IP address or port number.")
