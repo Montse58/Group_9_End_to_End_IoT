@@ -1,4 +1,13 @@
 import socket #import the socket module for network communication
+from pymongo import MongoClient
+from config import Config
+MONGO_URI= "mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/"
+
+client = MongoClient(Config.MONGO_URI)
+db = client['test']
+
+device1_metadata_collection = db['device1_metadate']
+device1_virutal_colection = db['device1_virtual']
 
 def TCP_server():
     try:
