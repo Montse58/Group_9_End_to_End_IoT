@@ -151,7 +151,60 @@ def avg_consumption():
     else:
         print("No water consumption data available for cycles.")
         return None
+#third query
+def most_electricity():
+    # Fetch metadata for all devices
+    fridge1_data = device1_metadata_collection.find_one({"customAttributes.name": "Fridge"})
+    fridge2_data = device1_metadata_collection.find_one({"customAttributes.name": "Second Fridge"})
+    dishwasher_data = device1_metadata_collection.find_one({"customAttributes.name": "Smart Dishwasher"})
 
+    # Extract unique identifiers
+    if fridge1_data:
+        fridge1_uid = fridge1_data["assetUid"]
+    else:
+        return "Fridge 1 data not found."
+
+    if fridge2_data:
+        fridge2_uid = fridge2_data["assetUid"]
+    else:
+        return "Fridge 2 data not found."
+
+    if dishwasher_data:
+        dishwasher_uid = dishwasher_data["assetUid"]
+    else:
+        return "Dishwasher data not found."
+
+    # Query MongoDB for electricity consumption for each device
+    devices = {
+        "Fridge 1": fridge1_uid,
+        "Fridge 2": fridge2_uid,
+        "Dishwasher": dishwasher_uid
+    }
+
+    total_consumption = {}
+
+    for device_name, uid in devices.items():
+        query = {
+            "topic": "brokertodb",
+            "payload.parent_asset_uid": uid
+        }
+        records = device1_virtual_collection.find(query)
+
+        # Calculate total consumption for the device
+        total_electricity = 0.0
+        for record in records:
+            electricity = record['payload'].get("Ammeter(Dishwasher)" if device_name == "Dishwasher" else "Ammeter(Fridge)")
+            if electricity:
+                total_electricity += float(electricity)
+
+        total_consumption[device_name] = total_electricity
+
+    # Find the device with the highest consumption
+    most_consumed_device = max(total_consumption, key=total_consumption.get)
+    most_consumed_value = total_consumption[most_consumed_device]
+
+    print(f"The device with the most electricity consumption is {most_consumed_device} with {most_consumed_value} kWh.")
+    return most_consumed_device, most_consumed_value
 
 
 #This is the Server Function:
@@ -194,10 +247,10 @@ def TCP_server():
                 consumption_data = avg_consumption()
                 incomingSocket.send(bytearray(f"Consumption Data: {consumption_data}", encoding='utf-8'))
 
-            
-
             elif int(myData) == 3:
                 print(f"Received message from client: >{myData}")
+                device_name = most_electricity()
+                incomingSocket.send(bytearray(f"Device: {device_name}", encoding='utf-8'))
 
             else:
                 print(f"Received message from client: >{myData} - INVALID INPUT")
