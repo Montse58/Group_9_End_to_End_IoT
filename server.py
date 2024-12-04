@@ -1,10 +1,8 @@
 import socket #import the socket module for network communication
 from pymongo import MongoClient
-from config import Config
-MONGO_URI= "mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/"
 
 
-client = MongoClient(Config.MONGO_URI)
+client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
 db = client['test']
 
 device1_metadata_collection = db['device1_metadate']
