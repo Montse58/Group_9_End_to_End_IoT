@@ -41,6 +41,7 @@ def TCP_server():
             #We are going to check the User's input from the client here:
             if int(myData) == 1:
                 print(f"Recieved message from client: >{myData}")
+                calc_moisture()
 
             elif int(myData) ==2:
                 print(f"Recieved message from client: >{myData}")
