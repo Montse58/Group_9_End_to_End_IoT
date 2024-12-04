@@ -1,6 +1,9 @@
 import socket #import the socket module for network communication
 from pymongo import MongoClient
 
+
+
+
 client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
 db = client['test']
 
@@ -39,13 +42,13 @@ def TCP_server():
             if int(myData) == 1:
                 print(f"Recieved message from client: >{myData}")
 
-            if int(myData) ==2:
+            elif int(myData) ==2:
                 print(f"Recieved message from client: >{myData}")
 
-            if int(myData) == 3:
+            elif int(myData) == 3:
                 print(f"Recieved message from client: >{myData}")
 
-            if int(myData) == 4:
+            elif int(myData) == 4:
                 print(f"Recieved message from client: >{myData}")
 
             else:
