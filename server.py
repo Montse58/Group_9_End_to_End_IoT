@@ -1,10 +1,10 @@
 import socket #import the socket module for network communication
 from pymongo import MongoClient
-from config import Config
-MONGO_URI= "mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/"
 
 
-client = MongoClient(Config.MONGO_URI)
+
+
+client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
 db = client['test']
 
 device1_metadata_collection = db['device1_metadate']
@@ -38,6 +38,8 @@ def TCP_server():
                 print(f"Error. {incomingAddress} has disconnected.")
                 break
 
+            #We are going to check the User's input from the client here:
+
             print(f"Recieved message from client: >{myData}")
 
             someData = myData.upper() #converts the revieved data to uppercase
@@ -54,3 +56,7 @@ def TCP_server():
 
 if __name__ == "__main__":
     TCP_server()
+
+
+
+#Here will be the first function 
