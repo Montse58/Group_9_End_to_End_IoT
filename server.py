@@ -1,13 +1,13 @@
 import socket #import the socket module for network communication
 from pymongo import MongoClient
-
+from datetime import datetime, timedelta
 
 
 
 client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
 db = client['test']
 
-device1_metadata_collection = db['device1_metadate']
+device1_metadata_collection = db['device1_metadata']
 device1_virutal_colection = db['device1_virtual']
 
 def TCP_server():
@@ -75,3 +75,28 @@ if __name__ == "__main__":
 
 
 #Here will be the first function 
+def calc_moisture():
+    fridge_data = device1_metadata_collection.find_one({"customAttributes.name": "Fridge"})
+
+    if fridge_data:
+        fridge_uid = fridge_data("assetUid")
+    else:
+        return "No data found"
+    
+    three_hours = datetime.now() - timedelta(hours =3)
+
+    query ={
+        "topic":"brokertodb",
+        "payload.parent_asset_uid":fridge_uid,
+        "time":{"$gte":three_hours}
+    }
+
+    new_data = device1_virutal_colection.find(query)
+
+    for i in new_data:
+        moisture = new_data['payload'].get('Moisture Meter - Moisture Meter-Fridge')
+
+        if moisture:
+            moisture = float(moisture)
+
+    
