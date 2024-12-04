@@ -20,32 +20,32 @@ def TCP_client():
         
         # Main loop for sending messages
         while True:
-            # Display valid queries to the user
-            print("\nValid queries:")
+            # Display valid query options to the user
+            print("\nSelect a query by entering its corresponding number:")
             for i, query in enumerate(valid_queries, 1):
                 print(f"{i}. {query}")
             
-            # Get message input from user
+            # Get the user's choice
             userMessage = input("\nEnter the number of your query (or type 'exit' to quit): >")
             
             # Exit program if user enters 'exit'
             if userMessage.lower() == 'exit':
                 print("Closing connection....")
                 print("Connection closed successfully.")
-                break  # Exits loop and closes connection
+                break  # Exit loop and close connection
             
-            # Handle numeric input
+            # Check if the input is a valid number
             if userMessage.isdigit():
-                queryIndex = int(userMessage) - 1  # Convert to 0-based index
-                if 0 <= queryIndex < len(valid_queries):
-                    # Send the corresponding query to the server
-                    myTCPSocket.send(bytearray(valid_queries[queryIndex], encoding='utf-8'))
+                queryIndex = int(userMessage)  # Convert to an integer
+                if 1 <= queryIndex <= len(valid_queries):  # Ensure the number is valid
+                    # Send the number (as an integer) to the server
+                    myTCPSocket.send(bytearray(str(queryIndex), encoding='utf-8'))
                     
                     # Receive and print the server's response
                     serverResponse = myTCPSocket.recv(2500)  # Receive up to 2500 bytes of data from the server
                     print(f"Server's response: {serverResponse.decode('utf-8')}")
                 else:
-                    print("Invalid number. Please select a valid query number.")
+                    print("Invalid number. Please select a valid query number (1, 2, or 3).")
             else:
                 print("Invalid input. Please enter a number corresponding to a query or 'exit' to quit.")
     
