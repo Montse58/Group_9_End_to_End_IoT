@@ -2,6 +2,14 @@ import socket  # Import the socket module for network communication
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 
+#This is the connection to mongodb and the collections:
+client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
+db = client['test']
+
+device1_metadata_collection = db['device1_metadata']
+device1_virtual_collection = db['device1_virtual']
+
+#This is the function for the binaryTree
 class Node:
     def __init__(self, key):
         self.key = key
@@ -43,12 +51,9 @@ class BinaryTree:
             values.append(current.key)
             self._inorder(current.right, values)
 
-client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
-db = client['test']
 
-device1_metadata_collection = db['device1_metadata']
-device1_virtual_collection = db['device1_virtual']
 
+#THIS IS THE FIRST QUERY FUNCTION:
 def calc_moisture():
     fridge_data = device1_metadata_collection.find_one({"customAttributes.name": "Fridge"})
 
@@ -89,6 +94,67 @@ def calc_moisture():
         print("No moisture data available in the last 3 hours.")
         return None
 
+#This is the second query:
+def avg_consumption():
+    # Fetch the dishwasher metadata
+    dishwasher_data = device1_metadata_collection.find_one({"customAttributes.name": "Smart Dishwasher"})
+
+    if dishwasher_data:
+        dishwasher_uid = dishwasher_data["assetUid"]  # Extract unique identifier
+    else:
+        print("No dishwasher data found.")
+        return None
+
+    # Query to fetch all water consumption data for the dishwasher
+    query = {
+        "topic": "brokertodb",
+        "payload.parent_asset_uid": dishwasher_uid
+    }
+
+    # Fetch data from MongoDB
+    new_data = device1_virtual_collection.find(query)
+
+    # Group water consumption data into cycles based on timestamps
+    cycle_data = []
+    previous_timestamp = None
+    current_cycle = []
+
+    for record in new_data:
+        timestamp = int(record['payload']['timestamp'])  # Convert timestamp to integer
+        water_consumption = record['payload'].get('Water Consumption Sensor')
+
+        if water_consumption:
+            water_consumption = float(water_consumption)
+
+            # Determine if a new cycle has started (e.g., a large gap in timestamps)
+            if previous_timestamp is not None and (timestamp - previous_timestamp > 3600):  # Assuming 1 hour separates cycles
+                # Store the current cycle and start a new one
+                cycle_data.append(current_cycle)
+                current_cycle = []
+
+            # Add water consumption to the current cycle
+            current_cycle.append(water_consumption)
+            previous_timestamp = timestamp
+
+    # Add the last cycle if it has data
+    if current_cycle:
+        cycle_data.append(current_cycle)
+
+    # Calculate the average water consumption per cycle
+    cycle_averages = [sum(cycle) / len(cycle) for cycle in cycle_data if cycle]
+
+    # Calculate the overall average across all cycles
+    if cycle_averages:
+        overall_average = sum(cycle_averages) / len(cycle_averages)
+        print(f"Average Water Consumption per Cycle: {overall_average} liters")
+        return overall_average
+    else:
+        print("No water consumption data available for cycles.")
+        return None
+
+
+
+#This is the Server Function:
 def TCP_server():
     try:
         # Get users server IP and port
