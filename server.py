@@ -8,6 +8,40 @@ class Node:
         self.left = None
         self.right = None
 
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+
+    # Insert a key into the binary tree
+    def insert(self, key):
+        if self.root is None:
+            self.root = Node(key)
+        else:
+            self._insert(self.root, key)
+
+    def _insert(self, current, key):
+        if key < current.key:
+            if current.left is None:
+                current.left = Node(key)
+            else:
+                self._insert(current.left, key)
+        else:  # Allow duplicates on the right for simplicity
+            if current.right is None:
+                current.right = Node(key)
+            else:
+                self._insert(current.right, key)
+
+    # Inorder traversal to get sorted moisture values
+    def inorder(self):
+        values = []
+        self._inorder(self.root, values)
+        return values
+
+    def _inorder(self, current, values):
+        if current is not None:
+            self._inorder(current.left, values)
+            values.append(current.key)
+            self._inorder(current.right, values)
 
 client = MongoClient("mongodb+srv://montsealonso24:Montse24@cluster0.zzo67.mongodb.net/")
 db = client['test']
