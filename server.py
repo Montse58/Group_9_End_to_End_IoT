@@ -36,8 +36,23 @@ def TCP_server():
                 break
 
             #We are going to check the User's input from the client here:
+            if int(myData) == 1:
+                print(f"Recieved message from client: >{myData}")
 
-            print(f"Recieved message from client: >{myData}")
+            if int(myData) ==2:
+                print(f"Recieved message from client: >{myData}")
+
+            if int(myData) == 3:
+                print(f"Recieved message from client: >{myData}")
+
+            if int(myData) == 4:
+                print(f"Recieved message from client: >{myData}")
+
+            else:
+                print(f"Recieved message from client: >{myData}"+"WRONGGG")
+
+
+            
 
             someData = myData.upper() #converts the revieved data to uppercase
             incomingSocket.send(bytearray(str(someData), encoding='utf-8')) #Respond to client with data
