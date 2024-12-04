@@ -191,6 +191,10 @@ def TCP_server():
 
             elif int(myData) == 2:
                 print(f"Received message from client: >{myData}")
+                consumption_data = avg_consumption()
+                incomingSocket.send(bytearray(f"Consumption Data: {consumption_data}", encoding='utf-8'))
+
+            
 
             elif int(myData) == 3:
                 print(f"Received message from client: >{myData}")
