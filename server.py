@@ -11,8 +11,9 @@ device1_virtual_collection = db['device1_virtual']
 
 #This is the function for the binaryTree
 class Node:
-    def __init__(self, key):
-        self.key = key
+    def __init__(self, key,value=None):
+        self.key = key      
+        self.value = value # this is associated with the key
         self.left = None
         self.right = None
 
@@ -21,23 +22,23 @@ class BinaryTree:
         self.root = None
 
     # Insert a key into the binary tree
-    def insert(self, key):
+    def insert(self, key,value):
         if self.root is None:
-            self.root = Node(key)
+            self.root = Node(key,value)
         else:
-            self._insert(self.root, key)
+            self._insert(self.root, key,value)
 
-    def _insert(self, current, key):
+    def _insert(self, current, key,value):
         if key < current.key:
             if current.left is None:
-                current.left = Node(key)
+                current.left = Node(key,value)
             else:
                 self._insert(current.left, key)
         else:  # Allow duplicates on the right for simplicity
             if current.right is None:
-                current.right = Node(key)
+                current.right = Node(key,value)
             else:
-                self._insert(current.right, key)
+                self._insert(current.right, key,value)
 
     # Inorder traversal to get sorted moisture values
     def inorder(self):
@@ -48,7 +49,7 @@ class BinaryTree:
     def _inorder(self, current, values):
         if current is not None:
             self._inorder(current.left, values)
-            values.append(current.key)
+            values.append((current.key,current.value))
             self._inorder(current.right, values)
 
 
@@ -80,7 +81,7 @@ def calc_moisture():
 
         if moisture:
             # Convert to float and insert into the tree
-            moisture_tree.insert(float(moisture))
+            moisture_tree.insert(float(moisture),None) # we put None since the value isn't needed in the first query
 
     # Retrieve all moisture values in sorted order
     moisture_values = moisture_tree.inorder()
@@ -114,27 +115,31 @@ def avg_consumption():
     # Fetch data from MongoDB
     new_data = device1_virtual_collection.find(query)
 
-    # Group water consumption data into cycles based on timestamps
-    cycle_data = []
-    previous_timestamp = None
-    current_cycle = []
+    #initialize BST to store water consumption with the timestamps
+    water_consumption_tree = BinaryTree()
 
+   
     for record in new_data:
         timestamp = int(record['payload']['timestamp'])  # Convert timestamp to integer
         water_consumption = record['payload'].get('Water Consumption Sensor')
 
         if water_consumption:
-            water_consumption = float(water_consumption)
+            water_consumption_tree.insert(timestamp,float(water_consumption))
 
-            # Determine if a new cycle has started (e.g., a large gap in timestamps)
-            if previous_timestamp is not None and (timestamp - previous_timestamp > 3600):  # Assuming 1 hour separates cycles
-                # Store the current cycle and start a new one
-                cycle_data.append(current_cycle)
-                current_cycle = []
+    #Getting the sorted water consumption data
+    sorted_data = water_consumption_tree.inorder()
 
-            # Add water consumption to the current cycle
-            current_cycle.append(water_consumption)
-            previous_timestamp = timestamp
+    #Group records into cycles
+    cycle_data = []
+    current_cycle = []
+    previous_timestamp = None
+
+    for timestamp,water_consumption in sorted_data:
+        if previous_timestamp is not None and (timestamp - previous_timestamp>3600): #1 Hour separates cycles
+            cycle_data.append(current_cycle)
+            current_cycle = []
+        current_cycle.append(water_consumption)
+        previous_timestamp = timestamp
 
     # Add the last cycle if it has data
     if current_cycle:
@@ -146,7 +151,7 @@ def avg_consumption():
     # Calculate the overall average across all cycles
     if cycle_averages:
         overall_average = sum(cycle_averages) / len(cycle_averages)
-        print(f"Average Water Consumption per Cycle: {overall_average} liters")
+        print(f"Average Water Consumption per Cycle: {overall_average} gallons")
         return overall_average
     else:
         print("No water consumption data available for cycles.")
