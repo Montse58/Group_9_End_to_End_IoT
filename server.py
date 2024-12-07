@@ -11,8 +11,9 @@ device1_virtual_collection = db['device1_virtual']
 
 #This is the function for the binaryTree
 class Node:
-    def __init__(self, key):
+    def __init__(self, key, device_name):
         self.key = key
+        self.device_name = device_name
         self.left = None
         self.right = None
 
@@ -20,36 +21,30 @@ class BinaryTree:
     def __init__(self):
         self.root = None
 
-    # Insert a key into the binary tree
-    def insert(self, key):
+    def insert(self, key, device_name):
         if self.root is None:
-            self.root = Node(key)
+            self.root = Node(key, device_name)
         else:
-            self._insert(self.root, key)
+            self._insert(self.root, key, device_name)
 
-    def _insert(self, current, key):
+    def _insert(self, current, key, device_name):
         if key < current.key:
             if current.left is None:
-                current.left = Node(key)
+                current.left = Node(key, device_name)
             else:
-                self._insert(current.left, key)
+                self._insert(current.left, key, device_name)
         else:  # Allow duplicates on the right for simplicity
             if current.right is None:
-                current.right = Node(key)
+                current.right = Node(key, device_name)
             else:
-                self._insert(current.right, key)
+                self._insert(current.right, key, device_name)
 
-    # Inorder traversal to get sorted moisture values
-    def inorder(self):
-        values = []
-        self._inorder(self.root, values)
-        return values
+    def find_max(self):
+        current = self.root
+        while current and current.right is not None:
+            current = current.right
+        return current
 
-    def _inorder(self, current, values):
-        if current is not None:
-            self._inorder(current.left, values)
-            values.append(current.key)
-            self._inorder(current.right, values)
 
 
 
@@ -151,6 +146,7 @@ def avg_consumption():
     else:
         print("No water consumption data available for cycles.")
         return None
+
 #third query
 def most_electricity():
     # Fetch metadata for all devices
@@ -181,7 +177,8 @@ def most_electricity():
         "Dishwasher": dishwasher_uid
     }
 
-    total_consumption = {}
+    # Initialize binary tree
+    consumption_tree = BinaryTree()
 
     for device_name, uid in devices.items():
         query = {
@@ -197,14 +194,18 @@ def most_electricity():
             if electricity:
                 total_electricity += float(electricity)
 
-        total_consumption[device_name] = total_electricity
+        # Insert the total consumption into the binary tree
+        consumption_tree.insert(total_electricity, device_name)
 
     # Find the device with the highest consumption
-    most_consumed_device = max(total_consumption, key=total_consumption.get)
-    most_consumed_value = total_consumption[most_consumed_device]
+    max_node = consumption_tree.find_max()
+    if max_node:
+        print(f"The device with the most electricity consumption is {max_node.device_name} with {max_node.key} kWh.")
+        return max_node.device_name, max_node.key
+    else:
+        print("No electricity data available.")
+        return None, None
 
-    print(f"The device with the most electricity consumption is {most_consumed_device} with {most_consumed_value} kWh.")
-    return most_consumed_device, most_consumed_value
 
 
 #This is the Server Function:
