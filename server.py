@@ -81,8 +81,10 @@ def calc_moisture():
     moisture_values = [val[0] for val in moisture_tree.inorder()]
     if moisture_values:
         avg_moisture = sum(moisture_values) / len(moisture_values)
-        print(f"Average Moisture in the last 3 hours: {avg_moisture}")
-        return avg_moisture
+        response_units = f"{avg_moisture:.2f}% RH" 
+        print(f"Average Moisture in the last 3 hours: {response_units}")
+        return response_units
+         
     else:
         print("No moisture data available in the last 3 hours.")
         return None
@@ -127,8 +129,10 @@ def avg_consumption():
     cycle_averages = [sum(cycle) / len(cycle) for cycle in cycle_data if cycle]
     if cycle_averages:
         overall_average = sum(cycle_averages) / len(cycle_averages)
-        print(f"Average Water Consumption per Cycle: {overall_average} gallons")
-        return overall_average
+        response_units = f"{overall_average:.2f} gallons"
+        print(f"Average Water Consumption per Cycle: {response_units}")
+        return response_units
+         
     else:
         print("No water consumption data available for cycles.")
         return None
@@ -163,8 +167,10 @@ def most_electricity():
 
     max_node = consumption_tree.find_max()
     if max_node:
-        print(f"The device with the most electricity consumption is {max_node.value} with {max_node.key} kWh.")
-        return max_node.value, max_node.key
+        response_units = f"{max_node.value} with {max_node.key:.2f} kWh"
+        print(f"The device with the most electricity consumption is {response_units}")
+        return response_units
+        
     else:
         return None, None
 
