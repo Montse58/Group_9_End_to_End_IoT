@@ -1,10 +1,10 @@
 First you must get the virtual machines from Google cloud set up properly. Then you will need to have the client.py and server.py code in each VM or in just one. Now that the VM is set up with the codes, you will need to change the directory to where the files are located and then before you run the programs you must install pymongo. You will type "pip install pymongo" like in the image below and it'll be downloaded in order to run the programs.  If you don't install it and decide to run it first, it'll give you an error of having it installed.
-
+![alt text](image.png)
 
 Now that pymongo has been installed, when you run the code in the virtual machine you must know your IP address(private and public). You can easily find the IP addresses on Google Cloud where you started the VM's, and it'll be Internal IP and External IP, like in the 1st image below. If you are unable to get to Google Cloud, you can look on your VM for your Internal and External IP addresses. Your external IP address will be displayed at the very top of your VM window, while as for the Internal IP address, you will need to type "ipconfig" in the terminal. Once you type "ipconfig" in the terminal, you will look at the IPv4 Address, that will be your Internal IP.
+![alt text](image-1.png)
 
-
-
+![alt text](image-2.png)
 
 
 
