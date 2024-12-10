@@ -8,12 +8,16 @@ Now that pymongo has been installed, when you run the code in the virtual machin
 
 
 
-Now that we have our IP addresses, you will need to run the server first, and to do that you will type "python Server.py". Then you'll be prompted to type an IP address, you will type the Internal IP address and any port number, in this case we can use 5000. The server will then be listening for a connection, and we can start our client the same way by typing "python Client.py". For the client, when it prompts you for the IP address, you will type the public IP of the server and the same port number(5000). Next, you will see a successful connection between server and client and a menu displayed for the queries. There are 3 queries to go through but 4 options, to go through the queries you can just type the number, for example, 1 for the 1st query display, 2 for the 2nd and so on. The 4th option you will have to type out "exit" in order to exit the program of the client and disconnect from the server.
+Now that we have our IP addresses, you will need to run the server first, and to do that you will type "python Server.py". Then you'll be prompted to type an IP address, you will type the Internal IP address and any port number, in this case we can use 5000. The server will then be listening for a connection, and we can start our client the same way by typing "python Client.py". For the client, when it prompts you for the IP address, you will type the public IP of the server and the same port number(5000). Next, you will see a successful connection between server and client and a menu displayed for the queries. There are 3 queries to go through but 4 options, to go through the queries you can just type the number, for example, 1 for the 1st query display, 2 for the 2nd and so on. The 4th option you will have to type out "exit" in order to exit the program of the client and disconnect from the server. 
+
+Please reference the images below for a visual explanation:
 
 ![alt text](image-3.png)
 
-connection established:
+This is when the connection is established:
 ![alt text](image-4.png)
 
-showcasing all the options:
+This showcases all the options when client enters 1-3 and types exit:
 ![alt text](image-5.png)
+
+NOTE: These screenshots were taken when Dataniz was turned off so that's why for Query 1, we have NONE because it has not been running for the past 3 hours
